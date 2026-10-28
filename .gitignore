@@ -11,6 +11,13 @@ node_modules
 dist
 dist-ssr
 *.local
+.vercel
+.env
+.env.*
+!.env.example
+data/videos.json
+public/uploads/*
+!public/uploads/.gitkeep
 
 # Editor directories and files
 .vscode/*

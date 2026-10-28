@@ -29,5 +29,8 @@ function videoApiPlugin() {
 }
 
 export default defineConfig({
-  plugins: [videoApiPlugin()]
+  plugins: [videoApiPlugin()],
+  define: {
+    "import.meta.env.VERCEL_BLOB_ENABLED": JSON.stringify(process.env.VERCEL === "1")
+  }
 });

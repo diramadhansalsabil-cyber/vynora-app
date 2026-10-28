@@ -13,6 +13,7 @@
 - 🎬 **Pemutar Video Sosial:** Mendukung embed TikTok, Instagram, YouTube, Facebook, dan Vimeo, dengan tautan untuk membuka video di platform asal.
 - 📼 **Video Lokal MP4:** Memutar video komunitas langsung dari aplikasi; sampul unggahan dibuat dari frame pertama.
 - ➕ **Tambah Video Komunitas:** Pengunjung dapat menambahkan tautan dari platform yang didukung atau mengunggah MP4 hingga 50 MB. Video tersimpan di server dan langsung muncul bagi pengunjung lain.
+- ☁️ **Siap Deploy Vercel:** API serverless menyimpan metadata dan berkas video di Vercel Blob.
 - 🎛️ **Kontrol Pemutaran:** Kontrol bawaan untuk video sosial dan kontrol HTML5 untuk video lokal.
 - 📑 **Filter Platform:** Kategori Semua, TikTok, Instagram, YouTube, Facebook, Vimeo, dan Video Lokal.
 - 📑 **Playlist Dinamis:** Video sosial dan lokal dengan sampul serta indikator video yang sedang aktif.
@@ -65,7 +66,17 @@ npm run build
 ```
 File siap saji akan dibuat di folder `dist/`. Jalankan `npm start` pada server Node.js untuk menyajikan situs dan API. Simpan folder `data/` serta `public/uploads/` pada penyimpanan persisten server agar video komunitas tidak hilang saat restart atau deploy.
 
-> **Catatan deployment:** `npm run dev` menjalankan API melalui middleware Vite. Untuk membagikan video yang diunggah kepada semua pengunjung, deploy aplikasi dengan `npm start` pada server yang mendukung Node.js dan penyimpanan persisten. Kiriman publik dibatasi 10 per alamat IP tiap 10 menit; file unggahan hanya menerima MP4 hingga 50 MB.
+> **Catatan deployment lokal:** `npm run dev` menjalankan API melalui middleware Vite. Server Node lokal (`npm start`) menggunakan `data/` dan `public/uploads/` untuk penyimpanan. Di Vercel, data baru disimpan di Vercel Blob.
+
+### Deploy ke Vercel
+
+1. Unggah seluruh source code ke GitHub, termasuk `api/`, `src/`, `public/`, `package.json`, `package-lock.json`, dan `vercel.json`. Jangan unggah `node_modules/`, `dist/`, `.env`, `data/videos.json`, atau isi `public/uploads/`.
+2. Di Vercel, impor repository GitHub tersebut. Preset **Vite**, Root Directory `./`, Build Command `npm run build`, dan Output Directory `dist` sudah ditentukan dalam `vercel.json`.
+3. Dari proyek Vercel, buka **Storage → Create Storage → Blob**, lalu buat Blob Store dengan akses **Public**. Hubungkan ke proyek untuk environment **Production** dan **Preview**. Pastikan Vercel menyediakan `BLOB_READ_WRITE_TOKEN` untuk fungsi unggah browser.
+4. Setelah variabel Blob tersedia, deploy ulang. API daftar video dan tautan sosial berjalan sebagai Vercel Functions; unggahan MP4 dikirim langsung dari browser ke Blob agar tidak melewati batas ukuran request fungsi.
+5. Uji tautan hasil deployment: daftar video, tambah tautan sosial, unggah MP4, pemutar video, dan unduh MP4.
+
+Unggahan pengunjung tetap terbuka seperti perilaku aplikasi saat ini, dengan batas ukuran, tipe berkas, validasi pathname, dan pembatasan token unggah sederhana. Untuk situs publik, pasang autentikasi atau moderasi sebelum mengumumkan unggahan secara luas; pembatasan di memori serverless bukan perlindungan kuota yang kuat. Video sosial tetap mengikuti kebijakan dan izin platform asalnya.
 
 ---
 
