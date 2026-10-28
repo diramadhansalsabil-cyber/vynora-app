@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="VynoraApp — Mobile Video Player by Kelompok ARENA." />
+  <meta name="theme-color" content="#FFFFFF" />
+  <title>VynoraApp — Video Player</title>
+  <link rel="icon" type="image/png" href="/vynora-mark.png" />
+  <!-- Font Roboto / Inter standar aplikasi Android / iOS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <div id="app">
+    
+    <!-- TOP STATUS BAR SIMULATION (iOS/Android style) -->
+    <div class="mobile-status-bar">
+      <span class="status-time" id="status-clock">23:37</span>
+      <div class="status-icons">
+        <svg width="15" height="11" viewBox="0 0 17 11" fill="currentColor">
+          <path d="M1 9.5h2V11H1v-1.5zm3.5-3h2V11h-2V6.5zm3.5-3h2V11H8V3.5zm3.5-3h2V11h-2V.5z" />
+        </svg>
+        <span class="status-wifi">📶</span>
+        <span class="status-battery">🔋 94</span>
+      </div>
+    </div>
+
+    <!-- APP TOP BAR (Header) -->
+    <header class="gotube-header" id="gotube-header">
+      <div class="logo-area" id="header-home-btn">
+        <img src="/vynora-mark.png" alt="Vynora Video Player" class="brand-mark" />
+        <span class="brand-copy">
+          <span class="brand-name">VYNORA</span>
+        </span>
+      </div>
+      <div class="search-bar-container">
+        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input type="text" id="search-input" placeholder="Search" />
+      </div>
+      <button class="add-video-btn" id="btn-add-video" type="button" aria-label="Tambah video" title="Tambah video">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <path d="M12 5v14M5 12h14"></path>
+        </svg>
+      </button>
+      <button class="profile-btn" id="btn-profile" aria-label="Profile / Team">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="#E2E8F0">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- CATEGORY CHIPS SCROLLBAR -->
+    <nav class="category-tabs" id="category-tabs">
+      <button class="cat-chip active" data-cat="all">Semua</button>
+      <button class="cat-chip" data-cat="tiktok">TikTok</button>
+      <button class="cat-chip" data-cat="instagram">Instagram</button>
+      <button class="cat-chip" data-cat="youtube">YouTube</button>
+      <button class="cat-chip" data-cat="facebook">Facebook</button>
+      <button class="cat-chip" data-cat="vimeo">Vimeo</button>
+      <button class="cat-chip" data-cat="local">Video Lokal</button>
+    </nav>
+
+    <!-- MAIN SCROLLABLE CONTENT -->
+    <main class="main-body" id="main-body">
+
+      <!-- ================= VIEW 1: HOME FEED (2-COLUMN GRID) ================= -->
+      <section class="view-section active" id="view-home">
+        <div class="video-grid" id="video-grid">
+          <!-- Video Cards will be populated by JS -->
+        </div>
+      </section>
+
+      <!-- ================= VIEW 2: MY VIDEO / PLAYLIST ================= -->
+      <section class="view-section" id="view-playlist">
+        <div class="section-banner">
+          <h3>Library</h3>
+          <span id="playlist-total-count">3 Video Tersedia</span>
+        </div>
+        <div class="vertical-video-list" id="vertical-playlist">
+          <!-- Playlist list items -->
+        </div>
+      </section>
+
+      <!-- ================= VIEW 3: DOWNLOADS ================= -->
+      <section class="view-section" id="view-downloads">
+        <div class="section-banner">
+          <h3>Downloads</h3>
+          <span id="download-total-count">0 Video</span>
+        </div>
+        <p class="downloads-description">Video MP4 yang diunggah langsung dapat diunduh. Video dari YouTube, TikTok, dan platform lain tetap ditampilkan di sini dan dibuka melalui platform asalnya.</p>
+        <div class="vertical-video-list" id="download-list"></div>
+        <p class="downloads-empty hidden" id="downloads-empty">Belum ada video untuk ditampilkan.</p>
+      </section>
+
+      <!-- ================= VIEW 4: ABOUT TEAM (ARENA) ================= -->
+      <section class="view-section" id="view-about">
+        <div class="profile-header-bar">
+          <button class="profile-back-btn" id="btn-profile-back" aria-label="Kembali ke Beranda">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+          </button>
+          <span class="profile-title-text">Profil Kelompok</span>
+        </div>
+        <div class="about-container">
+          <div class="about-card-banner">
+            <img src="/vynora-brand.png" alt="Vynora Video Player" class="brand-poster" />
+            <span class="uts-badge">TUGAS UTS KELOMPOK ARENA</span>
+          </div>
+
+          <div class="info-group">
+            <div class="poster-wrap">
+              <img src="/team/arena_poster.jpg" alt="Poster Kelompok ARENA" class="poster-img" />
+            </div>
+            <h4 class="info-group-title">Anggota Kelompok</h4>
+            <div class="team-cards" id="team-cards-container">
+              <!-- Team members rendered dynamically from config.js -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ================= FLOATING MINI PLAYER (SEPERTI GAMBAR 1) ================= -->
+    <div class="mini-player" id="mini-player">
+      <div class="mini-thumb-wrap" id="mini-open-detail">
+        <img src="https://images.unsplash.com/photo-1536240478700-b869070f9279?auto=format&fit=crop&w=800&q=80" id="mini-thumb" alt="Thumbnail" />
+        <div class="mini-play-indicator">▶</div>
+      </div>
+      <div class="mini-info" id="mini-open-detail-text">
+        <div class="mini-title" id="mini-title">Pilih video untuk mulai</div>
+        <div class="mini-channel" id="mini-channel">Vynora • Kelompok ARENA</div>
+      </div>
+      <div class="mini-actions">
+        <button class="mini-btn" id="mini-btn-play-pause" aria-label="Play / Pause">
+          <svg id="mini-icon-play" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+          </svg>
+          <svg id="mini-icon-pause" class="hidden" width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="6" y="4" width="4" height="16"></rect>
+            <rect x="14" y="4" width="4" height="16"></rect>
+          </svg>
+        </button>
+        <button class="mini-btn" id="mini-btn-close" aria-label="Close Mini Player">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ================= WATCH DETAIL MODAL / DRAWER (SEPERTI GAMBAR 2) ================= -->
+    <div class="watch-overlay hidden" id="watch-overlay">
+      <div class="watch-sheet">
+        <!-- Close / Minimize Top Bar -->
+        <div class="watch-header">
+          <button class="btn-minimize" id="btn-minimize-watch" aria-label="Tutup Player">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+          <span class="watch-now-label">Sedang Diputar</span>
+          <button class="btn-more-options" id="btn-more-options" aria-label="Options">⋮</button>
+        </div>
+
+        <!-- Video Screen 16:9 -->
+        <div class="watch-video-screen">
+          <video id="html5-player" playsinline preload="auto"></video>
+          <div id="youtube-player-container" class="youtube-container hidden">
+            <div id="youtube-player"></div>
+          </div>
+          <div id="tiktok-player-container" class="tiktok-container hidden">
+            <iframe
+              id="tiktok-player"
+              title="Pemutar video sosial"
+              allow="autoplay; encrypted-media; fullscreen; picture-in-picture; web-share"
+              allowfullscreen
+              loading="lazy"
+            ></iframe>
+          </div>
+          
+          <!-- Loading Overlay -->
+          <div class="screen-overlay-loading hidden" id="overlay-loading">
+            <div class="clean-spinner"></div>
+          </div>
+          <!-- Error Overlay -->
+          <div class="screen-overlay-error hidden" id="overlay-error">
+            <span id="error-message">Video gagal dimuat</span>
+            <button class="clean-retry-btn" id="retry-btn">Coba Lagi</button>
+          </div>
+        </div>
+
+        <div class="tiktok-open-link-wrap hidden" id="tiktok-open-link-wrap">
+          <a id="tiktok-open-link" target="_blank" rel="noopener noreferrer">Buka video di TikTok</a>
+        </div>
+
+        <!-- Progress Slider -->
+        <div class="watch-progress-wrap">
+          <input type="range" class="watch-progress-slider" id="progress-slider" min="0" max="100" value="0" step="0.1" />
+          <div class="watch-time-row">
+            <span id="time-current">00:00</span>
+            <span id="time-duration">00:00</span>
+          </div>
+        </div>
+
+        <!-- Playback Controls (Previous, Play/Pause, Stop, Next) -->
+        <div class="watch-playback-row">
+          <button class="watch-ctrl-btn" id="btn-previous" title="Previous Video">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"></path>
+            </svg>
+          </button>
+          <button class="watch-ctrl-btn" id="btn-stop" title="Stop (Kembali ke Awal)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="6" width="12" height="12"></rect>
+            </svg>
+          </button>
+          <button class="watch-play-btn" id="btn-play-pause" title="Play/Pause">
+            <svg id="icon-play" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <svg id="icon-pause" class="hidden" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="4" width="4" height="16"></rect>
+              <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+          </button>
+          <button class="watch-ctrl-btn" id="btn-next" title="Next Video">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"></path>
+            </svg>
+          </button>
+          <button class="watch-ctrl-btn" id="btn-repeat" title="Repeat Playlist">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="17 1 21 5 17 9"></polyline>
+              <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+              <polyline points="7 23 3 19 7 15"></polyline>
+              <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Video Title & Meta Info -->
+        <div class="watch-meta-info">
+          <h1 class="watch-title" id="video-title">Pilih video untuk mulai</h1>
+          <p class="watch-caption" id="watch-caption"></p>
+          <div class="watch-stats-row">
+            <span class="watch-views-date" id="video-views-date">60.4k views • Kelompok ARENA</span>
+            <button class="watch-like-btn" id="watch-like-btn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path>
+              </svg>
+              <span id="like-count">4.9k</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Action Buttons Row (Add to, Power saving, Popup, Share, Report) -->
+        <div class="watch-action-bar">
+          <div class="action-item" id="act-playlist">
+            <div class="action-circle">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+              </svg>
+            </div>
+            <span>Add to</span>
+          </div>
+
+          <div class="action-item" id="act-power">
+            <div class="action-circle">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+              </svg>
+            </div>
+            <span>Audio only</span>
+          </div>
+
+          <div class="action-item" id="act-pip">
+            <div class="action-circle">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                <rect x="12" y="9" width="8" height="6" rx="1" ry="1"></rect>
+              </svg>
+            </div>
+            <span>Popup</span>
+          </div>
+
+          <div class="action-item" id="act-share">
+            <div class="action-circle">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+              </svg>
+            </div>
+            <span>Share</span>
+          </div>
+
+          <div class="action-item" id="act-mute">
+            <div class="action-circle">
+              <svg id="watch-vol-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+              </svg>
+            </div>
+            <span id="watch-vol-label">Volume</span>
+          </div>
+        </div>
+
+        <!-- Creator Profile Row -->
+        <div class="watch-creator-row">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80" alt="Avatar" class="creator-avatar" id="creator-avatar" />
+          <div class="creator-meta">
+            <span class="creator-name" id="video-channel">Kelompok ARENA</span>
+            <span class="creator-subs">Pengembang VynoraApp</span>
+          </div>
+          <button class="creator-sub-btn" id="btn-sub">Subscribe</button>
+        </div>
+
+        <!-- Recommendation / Playlist List Under Video -->
+        <div class="watch-recommendations">
+          <h4 class="rec-heading">Video Lainnya</h4>
+          <div class="rec-list" id="rec-list">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <dialog class="add-video-dialog" id="add-video-dialog" aria-labelledby="add-video-title">
+      <form class="add-video-form" id="add-video-form">
+        <div class="add-video-heading">
+          <div>
+            <h2 id="add-video-title">Tambah video</h2>
+            <p>Bagikan video ke feed Vynora.</p>
+          </div>
+          <button class="dialog-close-btn" id="btn-close-add-video" type="button" aria-label="Tutup">×</button>
+        </div>
+
+        <div class="add-video-tabs" role="tablist" aria-label="Sumber video">
+          <button class="add-video-tab active" type="button" id="tab-add-link" role="tab" aria-selected="true">Tautan Sosmed</button>
+          <button class="add-video-tab" type="button" id="tab-add-upload" role="tab" aria-selected="false">Unggah MP4</button>
+        </div>
+
+        <label class="add-video-field">
+          <span>Judul video</span>
+          <input id="add-video-name" name="title" type="text" maxlength="100" placeholder="Contoh: Video promosi terbaru" required />
+        </label>
+        <label class="add-video-field">
+          <span>Nama kreator</span>
+          <input id="add-video-channel" name="channel" type="text" maxlength="60" placeholder="Nama atau akun kreator" required />
+        </label>
+
+        <label class="add-video-field">
+          <span>Kategori konten</span>
+          <select id="add-video-category" name="contentCategory" required>
+            <option value="lainnya">Lainnya</option>
+            <option value="film">Film</option>
+            <option value="drama">Drama</option>
+            <option value="komedi">Komedi</option>
+            <option value="musik">Musik</option>
+            <option value="edukasi">Edukasi</option>
+            <option value="olahraga">Olahraga</option>
+          </select>
+        </label>
+        <label class="add-video-field">
+          <span>Caption</span>
+          <textarea id="add-video-caption" name="caption" maxlength="300" rows="3" placeholder="Jelaskan isi videonya agar mudah ditemukan..." required></textarea>
+        </label>
+
+        <label class="add-video-field" id="add-video-link-field">
+          <span>Link video TikTok, Instagram, YouTube, Facebook, atau Vimeo</span>
+          <input id="add-video-link" name="url" type="url" placeholder="TikTok, Instagram, YouTube, Facebook, atau Vimeo" />
+        </label>
+        <label class="add-video-field hidden" id="add-video-file-field">
+          <span>Pilih video MP4 (maksimum 50 MB; sampul diambil dari frame pertama)</span>
+          <input id="add-video-file" name="video" type="file" accept="video/mp4,.mp4" />
+        </label>
+
+        <p class="add-video-notice">Video yang dikirim akan langsung tampil untuk semua pengunjung.</p>
+        <p class="add-video-error hidden" id="add-video-error" role="alert"></p>
+        <button class="add-video-submit" id="btn-submit-video" type="submit">Tambahkan ke feed</button>
+      </form>
+    </dialog>
+
+    <!-- ================= BOTTOM NAVIGATION BAR (SEPERTI GAMBAR 1) ================= -->
+    <nav class="gotube-bottom-nav" id="gotube-bottom-nav">
+      <button class="gotube-tab active" data-tab="home" id="tab-home">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+        </svg>
+        <span>HOME</span>
+      </button>
+
+      <button class="gotube-tab" data-tab="playlist" id="tab-library">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21z"></path>
+          <path d="M4 5.5v13A2.5 2.5 0 0 1 6.5 16H20"></path>
+        </svg>
+        <span>LIBRARY</span>
+      </button>
+
+      <button class="gotube-tab" data-tab="downloads" id="tab-downloads">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M12 7v10M8 13l4 4 4-4"></path>
+        </svg>
+        <span>DOWNLOADS</span>
+      </button>
+
+      <button class="gotube-tab" data-tab="about" id="tab-about">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="4"></circle>
+          <path d="M5 21a7 7 0 0 1 14 0"></path>
+        </svg>
+        <span>PROFILE</span>
+      </button>
+    </nav>
+
+    <!-- TOAST POPUP NOTIFICATION -->
+    <div class="toast-clean hidden" id="toast">
+      <span id="toast-message"></span>
+    </div>
+
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
